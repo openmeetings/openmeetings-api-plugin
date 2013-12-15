@@ -291,7 +291,7 @@ class openmeetings_gateway {
 		$url = $this->getRestUrl("RoomService") . "getFlvRecordingByExternalRoomType?SID=" . $this->session_id 
 			. "&externalRoomType=" . urlencode($this->config["moduleKey"]);
 		
-		$result = $restService->call($url, "");
+		$result = $restService->call($url, "return");
 		
 		return $result;
 	}
