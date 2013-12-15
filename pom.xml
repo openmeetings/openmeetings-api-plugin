@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+        <modelVersion>4.0.0</modelVersion>
+        <artifactId>api-plugin</artifactId>
+        <name>Openmeetings PHP API</name>
+        <description>Openmeetings PHP API for SOAP/REST calls</description>
+        <groupId>org.apache.openmeetings</groupId>
+        <version>1.0.0</version>
+        <url>https://code.google.com/a/apache-extras.org/p/openmeetings-api-plugin/</url>
+        <inceptionYear>2013</inceptionYear>
+        <organization>
+                <name>Apache Openmeetings</name>
+                <url>http://openmeetings.apache.org</url>
+        </organization>
+        <licenses>
+                <license>
+                        <name>Apache 2</name>
+                        <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+                        <distribution>repo</distribution>
+                        <comments>A business-friendly OSS license</comments>
+                </license>
+        </licenses>
+        <mailingLists>
+                <mailingList>
+                        <name>Openmeetings user/developer list</name>
+                        <post>http://openmeetings.apache.org/mail-lists.html</post>
+                </mailingList>
+        </mailingLists>
+        <issueManagement>
+                <system>Apache JIRA</system>
+                <url>https://issues.apache.org/jira/browse/OPENMEETINGS</url>
+        </issueManagement>
+        <developers>
+                <developer>
+                        <id>Sebastian Wagner</id>
+                        <email>sebawagner@apache.org</email>
+                </developer>
+                <developer>
+                        <id>Maxim Solodovnik</id>
+                        <email>solomax@apache.org</email>
+                </developer>
+        </developers>
+        <properties>
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+				<maven.test.skip>true</maven.test.skip>
+        </properties>
+        <scm>
+                <connection>scm:svn:http://svn.codespot.com/a/apache-extras.org/openmeetings-api-plugin/trunk</connection>
+                <developerConnection>scm:svn:https://svn.codespot.com/a/apache-extras.org/openmeetings-api-plugin/trunk</developerConnection>
+                <tag>HEAD</tag>
+        </scm>
+        <build>
+                <defaultGoal>install</defaultGoal>
+                <directory>${basedir}/target</directory>
+                <plugins>
+			<plugin> <!-- going to turn off the jar creation -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>default-jar</id>
+						<phase>never</phase>
+						<configuration>
+							<finalName>unwanted</finalName>
+							<classifier>unwanted</classifier>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+                        <plugin>
+                                <artifactId>maven-assembly-plugin</artifactId>
+                                <version>2.4</version>
+                                <configuration>
+                                        <descriptors>
+                                                <descriptor>src/main/assembly/api.xml</descriptor>
+                                        </descriptors>
+                                </configuration>
+                                <executions>
+                                        <execution>
+                                                <id>make-assembly</id>
+                                                <!-- this is used for inheritance merges -->
+                                                <phase>package</phase>
+                                                <!-- bind to the packaging phase -->
+                                                <goals>
+                                                        <goal>single</goal>
+                                                </goals>
+                                        </execution>
+                                </executions>
+                        </plugin>
+                        <plugin>
+                                <artifactId>maven-project-info-reports-plugin</artifactId>
+                                <version>2.4</version>
+                        </plugin>
+		</plugins>
+	</build>
+</project>
+
