@@ -167,5 +167,3 @@ class openmeetings_rest_service {
 	}
 }
 
-?>
-

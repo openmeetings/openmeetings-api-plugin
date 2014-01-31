@@ -311,5 +311,3 @@ class openmeetings_gateway {
 	}
 }
 
-?>
-
