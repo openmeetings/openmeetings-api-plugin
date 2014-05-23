@@ -19,10 +19,7 @@
 */
 /*
  * Created on 03.01.2012 by eugen.schwert@gmail.com
- *
- *
  */
-
 class openmeetings_rest_service {
 	function call($request, $returnAttribute = "return") {
 		// This will allow you to view errors in the browser
@@ -36,69 +33,79 @@ class openmeetings_rest_service {
 		// $request
 		
 		// Initialize the session by passing the request as a parameter
-		$session = curl_init ( $request );
-		
-		// Set curl options by passing session and flags
-		// CURLOPT_HEADER allows us to receive the HTTP header
-		curl_setopt ( $session, CURLOPT_HEADER, true );
-		
-		// CURLOPT_RETURNTRANSFER will return the response
-		curl_setopt ( $session, CURLOPT_RETURNTRANSFER, true );
+		$options = array (
+				CURLOPT_RETURNTRANSFER => true			// return web page
+				, CURLOPT_HEADER => true 				// return headers
+				, CURLOPT_FOLLOWLOCATION => true		// follow redirects
+				, CURLOPT_ENCODING => ""				// handle all encodings
+				, CURLOPT_USERAGENT => "openmeetings"	// who am i
+				, CURLOPT_AUTOREFERER => true			// set referer on redirect
+				, CURLOPT_CONNECTTIMEOUT => 120			// timeout on connect
+				, CURLOPT_TIMEOUT => 120				// timeout on response
+				, CURLOPT_MAXREDIRS => 10					// stop after 10 redirects
+				//, CURLOPT_SSL_VERIFYPEER => false			// Disabled SSL Cert checks
+				//, CURLOPT_SSL_VERIFYHOST => false			// Disables hostname verification
+		);
+		$session = curl_init($request);
+		curl_setopt_array($session, $options);
 		
 		// Make the request
-		$response = curl_exec ( $session );
+		$response = curl_exec($session);
 		
 		// Close the curl session
-		curl_close ( $session );
+		curl_close($session);
 		
 		// Confirm that the request was transmitted to the OpenMeetings! Image Search Service
-		if (! $response) {
-			die ( "Request OpenMeetings! OpenMeetings Service failed and no response was returned." );
+		if (!$response) {
+			$err = curl_errno($session);
+			$errmsg = curl_error($session);
+			$header = curl_getinfo($session);
+			die("Request OpenMeetings! OpenMeetings Service failed and no response was returned.");
 		}
 		
 		// Create an array to store the HTTP response codes
 		$status_code = array ();
 		
 		// Use regular expressions to extract the code from the header
-		preg_match ( '/\d\d\d/', $response, $status_code );
+		preg_match('/\d\d\d/', $response, $status_code);
 		
 		// Check the HTTP Response code and display message if status code is not 200 (OK)
-		switch ($status_code [0]) {
-			case 200 :
+		switch($status_code[0]) {
+			case 200:
 				// Success
 				break;
-			case 503 :
-				die ( 'Your call to OpenMeetings Web Services failed and returned an HTTP status of 503.   
-			                     That means: Service unavailable. An internal problem prevented us from returning' . ' data to you.' );
+			case 503:
+				die('Your call to OpenMeetings Web Services failed and returned an HTTP status of 503.   
+			                     That means: Service unavailable. An internal problem prevented us from returning' . ' data to you.');
 				break;
-			case 403 :
-				die ( 'Your call to OpenMeetings Web Services failed and returned an HTTP status of 403.   
-			                     That means: Forbidden. You do not have permission to access this resource, or are over' . ' your rate limit.' );
+			case 403:
+				die('Your call to OpenMeetings Web Services failed and returned an HTTP status of 403.   
+			                     That means: Forbidden. You do not have permission to access this resource, or are over' . ' your rate limit.');
 				break;
-			case 400 :
+			case 400:
 				// You may want to fall through here and read the specific XML error
-				die ( 'Your call to OpenMeetings Web Services failed and returned an HTTP status of 400.   
+				die('Your call to OpenMeetings Web Services failed and returned an HTTP status of 400.   
 			                     That means:  Bad request. The parameters passed to the service did not match as expected.   
-			                     The exact error is returned in the XML response.' );
+			                     The exact error is returned in the XML response.');
 				break;
-			default :
-				die ( 'Your call to OpenMeetings Web Services returned an unexpected HTTP status of: ' . $status_code [0] . " Request " . $request );
+			default:
+				die('Your call to OpenMeetings Web Services returned an unexpected HTTP status of: ' . $status_code[0] . " Request " . $request);
 		}
 		
-			// Get the XML from the response, bypassing the header
+		// Get the XML from the response, bypassing the header
 		if (!($xml = strstr($response, '<ns'))) {
 			$xml = null;
 		}
-			
+		
 		$dom = new DOMDocument();
 		$dom->loadXML($xml);
-			
+		
 		if ($returnAttribute == "") {
 			//echo "XML".$xml."<br/>";
 			return $this->getArray($dom);
 		} else {
 			$returnNodeList = $dom->getElementsByTagName($returnAttribute);
-			$ret = array();
+			$ret = array ();
 			foreach ($returnNodeList as $returnNode) {
 				if ($returnNodeList->length == 1) {
 					return $this->getArray($returnNode);
@@ -108,9 +115,8 @@ class openmeetings_rest_service {
 			}
 			return $ret;
 		}
-			
 	}
-
+	
 	function getArray($node) {
 		if (is_null($node) || !is_object($node)) {
 			return $node;
@@ -125,7 +131,7 @@ class openmeetings_rest_service {
 					. " :: type = " . $node->nodeType
 					. " :: val = " . $node->nodeValue
 					. "\n");
-		/*
+
 		if ($node->hasAttributes()) {
 			foreach ($node->attributes as $attr) {
 				$array[$attr->nodeName] = $attr->nodeValue;
@@ -154,16 +160,15 @@ class openmeetings_rest_service {
 				}
 			}
 		}
-
+		
 		return $array;
 	}
-
-	function getError(){
+	
+	function getError() {
 		return false;
 	}
-
-	function fault(){
+	
+	function fault() {
 		return false;
 	}
 }
-
