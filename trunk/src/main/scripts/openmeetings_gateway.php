@@ -293,7 +293,7 @@ class openmeetings_gateway {
 		
 		$result = $restService->call($url, "return");
 		
-		return $result;
+		return $result && !is_array(reset($result)) ? array($result) : $result;
 	}
 
 	/**
@@ -307,7 +307,7 @@ class openmeetings_gateway {
 		
 		$result = $restService->call($url, "return");
 		
-		return $result;
+		return $result && !is_array(reset($result)) ? array($result) : $result;
 	}
 }
 
