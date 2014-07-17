@@ -299,7 +299,7 @@ class openmeetings_gateway {
 		
 		$result = $restService->call($url, "return");
 		
-		return getList($result);
+		return $this->getList($result);
 	}
 
 	/**
@@ -313,6 +313,6 @@ class openmeetings_gateway {
 		
 		$result = $restService->call($url, "return");
 		
-		return getList($result);
+		return $this->getList($result);
 	}
 }
