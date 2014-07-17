@@ -52,9 +52,6 @@ class openmeetings_rest_service {
 		// Make the request
 		$response = curl_exec($session);
 		
-		// Close the curl session
-		curl_close($session);
-		
 		// Confirm that the request was transmitted to the OpenMeetings! Image Search Service
 		if (!$response) {
 			$err = curl_errno($session);
@@ -62,6 +59,8 @@ class openmeetings_rest_service {
 			$header = curl_getinfo($session);
 			die("Request OpenMeetings! OpenMeetings Service failed and no response was returned.");
 		}
+		// Close the curl session
+		curl_close($session);
 		
 		// Create an array to store the HTTP response codes
 		$status_code = array ();
