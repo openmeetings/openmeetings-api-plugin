@@ -150,6 +150,7 @@ class openmeetings_gateway {
 		}
 		return - 1;
 	}
+	
 	function setUserObjectAndGenerateRoomHashByURLAndRecFlag($username, $firstname, $lastname, $profilePictureUrl, $email, $userId, $systemType, $room_id, $becomeModerator, $allowRecording) {
 		$restService = new openmeetings_rest_service();
 		// echo $restService."<br/>";
@@ -181,6 +182,7 @@ class openmeetings_gateway {
 		}
 		return - 1;
 	}
+	
 	function deleteRoom($openmeetings) {
 		// echo $client_roomService."<br/>";
 		$restService = new openmeetings_rest_service();
@@ -282,6 +284,10 @@ class openmeetings_gateway {
 		return - 1;
 	}
 	
+	function getList($result) {
+		return $result && !is_array(reset($result)) ? array($result) : $result;
+	}
+	
 	/**
 	 * Get list of available recordings made by this instance
 	 */
@@ -293,7 +299,7 @@ class openmeetings_gateway {
 		
 		$result = $restService->call($url, "return");
 		
-		return $result && !is_array(reset($result)) ? array($result) : $result;
+		return getList($result);
 	}
 
 	/**
@@ -307,7 +313,6 @@ class openmeetings_gateway {
 		
 		$result = $restService->call($url, "return");
 		
-		return $result && !is_array(reset($result)) ? array($result) : $result;
+		return getList($result);
 	}
 }
-
