@@ -5,7 +5,7 @@
         <name>Openmeetings PHP API</name>
         <description>Openmeetings PHP API for SOAP/REST calls</description>
         <groupId>org.apache.openmeetings</groupId>
-        <version>1.0.0</version>
+        <version>2.0.0</version>
         <url>https://code.google.com/a/apache-extras.org/p/openmeetings-api-plugin/</url>
         <inceptionYear>2013</inceptionYear>
         <organization>
@@ -45,8 +45,8 @@
 				<maven.test.skip>true</maven.test.skip>
         </properties>
         <scm>
-                <connection>scm:svn:http://svn.codespot.com/a/apache-extras.org/openmeetings-api-plugin/trunk</connection>
-                <developerConnection>scm:svn:https://svn.codespot.com/a/apache-extras.org/openmeetings-api-plugin/trunk</developerConnection>
+                <connection>scm:git:git@github.com:openmeetings-extras/openmeetings-api-plugin.git</connection>
+                <developerConnection>scm:git:git@github.com:openmeetings-extras/openmeetings-api-plugin.git</developerConnection>
                 <tag>HEAD</tag>
         </scm>
         <build>
