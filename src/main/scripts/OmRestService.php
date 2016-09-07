@@ -78,7 +78,9 @@ class OmRestService {
 		} else {
 			//TODO something weird with PUT
 			$options[CURLOPT_POST] = true;
-			$options[CURLOPT_POSTFIELDS] = $params;
+			if ($params) {
+				$options[CURLOPT_POSTFIELDS] = $params;
+			}
 		}
 		$session = curl_init($url);
 		curl_setopt_array($session, $options);
