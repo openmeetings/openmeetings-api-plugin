@@ -72,7 +72,9 @@ class OmRestService {
 			$url .= '&sid=' . $sid;
 		}
 		if ($method == RestMethod::GET) {
-			$url .= '&' . http_build_query($params, '', '&');
+			if ($params) {
+				$url .= '&' . http_build_query($params, '', '&');
+			}
 		} else {
 			//TODO something weird with PUT
 			$options[CURLOPT_POST] = true;
