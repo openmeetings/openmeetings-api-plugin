@@ -207,4 +207,28 @@ class OmGateway {
 	}
 		return array();
 	}
+
+	function deleteRecording($recId) {
+		$rest = new OmRestService();
+		$response = $rest->call(
+				$this->getRestUrl("record") . $recId
+				, RestMethod::DELETE
+				, $this->sessionId
+				, ""
+				, null
+				, "serviceResult"
+			);
+		if ($rest->isError()) {
+			echo '<h2>Fault (Service error)</h2><pre>';
+			print_r($rest->getMessage());
+			echo '</pre>';
+		} else {
+			if ($response["type"] == "SUCCESS") {
+				return $response["code"];
+			} else {
+				echo '<h2>Error While signing into OpenMeetings, please check credentials</h2><pre>' . $response["code"] . '</pre>';
+			}
+		}
+		return -1;
+	}
 }
