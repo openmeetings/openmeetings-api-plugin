@@ -204,7 +204,7 @@ class OmGateway {
 			echo '</pre>';
 		} else {
 			return $response;
-	}
+		}
 		return array();
 	}
 
@@ -230,5 +230,39 @@ class OmGateway {
 			}
 		}
 		return -1;
+	}
+
+	function createFile($fileJson, $file) {
+		$rest = new OmRestService();
+		$boundary = '';
+		$params = array(
+				array(
+					"name" => "file"
+					, "type" => "application/json"
+					, "val" => json_encode($fileJson)
+				)
+				, array(
+					"name" => "stream"
+					, "type" => "application/octet-stream"
+					, "val" => file_get_contents($file)
+				)
+			);
+		$data = OmRestService::encode($params, $boundary);
+		$response = $rest->call(
+				$this->getRestUrl("file")
+				, RestMethod::POST
+				, $this->sessionId
+				, $data
+				, array("Content-Length: " . strlen($data), 'Content-Type: multipart/form-data; boundary=' . $boundary)
+				, "fileExplorerItemDTO"
+				);
+		if ($rest->isError()) {
+			echo '<h2>Fault (Service error)</h2><pre>';
+			print_r($rest->getMessage());
+			echo '</pre>';
+		} else {
+			return $response;
+		}
+		return array();
 	}
 }
