@@ -51,6 +51,19 @@ class OmGateway {
 		return $this->config["protocol"] . "://" . $this->config["host"] . $port . "/" . $this->config["context"];
 	}
 
+	function version() {
+		$rest = new OmRestService();
+		$response = $rest->call(
+				$this->getRestUrl("info") . "version"
+				, RestMethod::GET
+				, null
+				, array()
+				, null
+				, "info"
+				);
+		return $response;
+	}
+
 	function login() {
 		$rest = new OmRestService();
 		$response = $rest->call(
@@ -136,6 +149,7 @@ class OmGateway {
 		}
 		return -1;
 	}
+
 	function updateRoom($data) {
 		$data['externalType'] = $this->config["module"];
 		$rest = new OmRestService();
