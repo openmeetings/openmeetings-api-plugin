@@ -150,6 +150,30 @@ class OmGateway {
 		return -1;
 	}
 
+	function getRooms($type) {
+		$rest = new OmRestService();
+		$response = $rest->call(
+				$this->getRestUrl("room") . "public/" . $type
+				, RestMethod::GET
+				, $this->sessionId
+				, null
+				, null
+				, "roomDTO"
+				);
+		if ($rest->isError()) {
+			echo '<h2>Fault (Service error)</h2><pre>';
+			print_r($rest->getMessage());
+			echo '</pre>';
+		} else {
+			if (is_array($response)) {
+				return $response;
+			} else {
+				echo '<h2>Error While signing into OpenMeetings, please check credentials</h2><pre>' . $response["code"] . '</pre>';
+			}
+		}
+		return -1;
+	}
+
 	function updateRoom($data) {
 		$data['externalType'] = $this->config["module"];
 		$rest = new OmRestService();
