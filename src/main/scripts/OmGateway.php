@@ -4,12 +4,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * It is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You can get a copy of the GNU General Public License
  * at <http://www.gnu.org/licenses/>.
  */
@@ -104,6 +104,7 @@ class OmGateway {
 			, "firstname" => $firstname
 			, "lastname" => $lastname
 			, "email" => $email
+			, "pictureUri" => $profilePictureUrl
 			, "externalId" => $userId
 			, "externalType" => $this->config["module"]
 		);
@@ -242,28 +243,14 @@ class OmGateway {
 		return -1;
 	}
 
-	function createFile($fileJson, $file) {
+	function getFiles() {
 		$rest = new OmRestService();
-		$boundary = '';
-		$params = array(
-				array(
-					"name" => "file"
-					, "type" => "application/json"
-					, "val" => json_encode($fileJson)
-				)
-				, array(
-					"name" => "stream"
-					, "type" => "application/octet-stream"
-					, "val" => file_get_contents($file)
-				)
-			);
-		$data = OmRestService::encode($params, $boundary);
 		$response = $rest->call(
-				$this->getRestUrl("file")
-				, RestMethod::POST
+				$this->getRestUrl("file") . urlencode($this->config["module"])
+				, RestMethod::GET
 				, $this->sessionId
-				, $data
-				, array("Content-Length: " . strlen($data), 'Content-Type: multipart/form-data; boundary=' . $boundary)
+				, ""
+				, null
 				, "fileItemDTO"
 				);
 		if ($rest->isError()) {
@@ -272,5 +259,38 @@ class OmGateway {
 			return $response;
 		}
 		return array();
+	}
+
+	function createFile($fileJson, $fileContents) {
+		$fileJson['externalType'] = $this->config["module"];
+		$rest = new OmRestService();
+		$boundary = '';
+		$params = array(
+				array(
+					"name" => "file"
+					, "type" => "application/json"
+					, "val" => json_encode(array('fileItemDTO' => $fileJson))
+				)
+				, array(
+					"name" => "stream"
+					, "type" => "application/octet-stream"
+					, "val" => $fileContents
+				)
+			);
+		$data = OmRestService::encode($params, $boundary);
+		$response = $rest->call(
+				$this->getRestUrl("file")
+				, RestMethod::POST
+				, $this->sessionId
+				, $data
+				, array("Content-Length: " . (strlen(bin2hex($data)) / 2), 'Content-Type: multipart/form-data; boundary=' . $boundary)
+				, "fileItemDTO"
+				);
+		if ($rest->isError()) {
+			$this->showError($rest);
+		} else {
+			return $response;
+		}
+		return false;
 	}
 }

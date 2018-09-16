@@ -1,22 +1,22 @@
 <?php
 /*
-* Licensed to the Apache Software Foundation (ASF) under one
-* or more contributor license agreements.  See the NOTICE file
-* distributed with this work for additional information
-* regarding copyright ownership.  The ASF licenses this file
-* to you under the Apache License, Version 2.0 (the
-* "License") +  you may not use this file except in compliance
-* with the License.  You may obtain a copy of the License at
-*
-*   http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License") +  you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 /*
  * Created on 03.01.2012 by eugen.schwert@gmail.com
  */
@@ -28,8 +28,13 @@ abstract class RestMethod
 }
 
 class OmRestService {
+	private $config = array();
 	private $error = false;
 	private $message = "";
+
+	function __construct($cfg) {
+		$this->config = $cfg;
+	}
 
 	public static function encode($params, &$boundary) {
 		$eol = "\r\n";
@@ -50,26 +55,7 @@ class OmRestService {
 		return $data;
 	}
 
-	public function call($url, $method, $sid, $params, $headers, $wraperName) {
-		$options = array (
-				CURLOPT_RETURNTRANSFER => true			// return web page
-				, CURLOPT_HEADER => false 				// return headers
-				, CURLOPT_FOLLOWLOCATION => true		// follow redirects
-				, CURLOPT_ENCODING => ""				// handle all encodings
-				, CURLOPT_USERAGENT => "openmeetings"	// who am i
-				, CURLOPT_AUTOREFERER => true			// set referer on redirect
-				, CURLOPT_CONNECTTIMEOUT => 120			// timeout on connect
-				, CURLOPT_TIMEOUT => 120				// timeout on response
-				, CURLOPT_MAXREDIRS => 10					// stop after 10 redirects
-				//, CURLOPT_SSL_VERIFYPEER => false			// Disabled SSL Cert checks
-				//, CURLOPT_SSL_VERIFYHOST => false			// Disables hostname verification
-		);
-		if ($headers) {
-			$options[CURLOPT_HTTPHEADER] = $headers;
-		}
-		if ($method != RestMethod::GET && $method != RestMethod::POST) {
-			$options[CURLOPT_CUSTOMREQUEST] = $method;
-		}
+	private static function setParams(&$url, $method, $sid, $params, &$options) {
 		$url .= '?';
 		if ($sid) {
 			$url .= '&sid=' . $sid;
@@ -85,17 +71,38 @@ class OmRestService {
 				$options[CURLOPT_POSTFIELDS] = $params;
 			}
 		}
+	}
+
+	public function call($url, $method, $sid, $params, $headers, $wraperName) {
+		$options = array (
+				CURLOPT_RETURNTRANSFER => true							// return web page
+				, CURLOPT_HEADER => false 								// return headers
+				, CURLOPT_FOLLOWLOCATION => true						// follow redirects
+				, CURLOPT_ENCODING => ""								// handle all encodings
+				, CURLOPT_USERAGENT => "openmeetings"					// who am i
+				, CURLOPT_AUTOREFERER => true							// set referer on redirect
+				, CURLOPT_CONNECTTIMEOUT => 120							// timeout on connect
+				, CURLOPT_TIMEOUT => 120								// timeout on response
+				, CURLOPT_MAXREDIRS => 10								// stop after 10 redirects
+				, CURLOPT_SSL_VERIFYPEER => $this->config["checkpeer"]	// Enable/Disable SSL Cert checks
+				, CURLOPT_SSL_VERIFYHOST => $this->config["checkhost"]	// Enable/Disable hostname verification
+		);
+		if ($headers) {
+			$options[CURLOPT_HTTPHEADER] = $headers;
+		}
+		if ($method != RestMethod::GET && $method != RestMethod::POST) {
+			$options[CURLOPT_CUSTOMREQUEST] = $method;
+		}
+		OmRestService::setParams($url, $method, $sid, $params, $options);
 		$session = curl_init($url);
 		curl_setopt_array($session, $options);
 
 		$response = curl_exec($session);
 		if (!$response) {
-			$err = curl_errno($session);
-			$errmsg = curl_error($session);
 			$info = curl_getinfo($session);
 			curl_close($session);
 			$this->error = true;
-			$this->message = 'Request OpenMeetings! OpenMeetings Service failed and no response was returned. Additioanl info: ' . print_r($info, true);
+			$this->message = 'Request OpenMeetings! OpenMeetings Service failed and no response was returned. Additioanl info: ' . print_object($info);
 			return;
 		}
 		//TODO FIXME check status
