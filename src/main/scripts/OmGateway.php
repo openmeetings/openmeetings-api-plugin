@@ -54,7 +54,7 @@ class OmGateway {
 	}
 
 	function version() {
-		$rest = new OmRestService();
+		$rest = new OmRestService($this->config);
 		$response = $rest->call(
 				$this->getRestUrl("info") . "version"
 				, RestMethod::GET
@@ -80,7 +80,7 @@ class OmGateway {
 	}
 
 	function login() {
-		$rest = new OmRestService();
+		$rest = new OmRestService($this->config);
 		$response = $rest->call(
 				$this->getRestUrl("user") . "login"
 				, RestMethod::GET
@@ -116,7 +116,7 @@ class OmGateway {
 	}
 
 	function getSecureHash($user, $options) {
-		$rest = new OmRestService();
+		$rest = new OmRestService($this->config);
 		$response = $rest->call(
 				$this->getRestUrl("user") . "hash"
 				, RestMethod::POST
@@ -139,7 +139,7 @@ class OmGateway {
 	}
 
 	function getRoom($roomId) {
-		$rest = new OmRestService();
+		$rest = new OmRestService($this->config);
 		$response = $rest->call(
 				$this->getRestUrl("room") . $roomId
 				, RestMethod::GET
@@ -162,7 +162,7 @@ class OmGateway {
 
 	function updateRoom($data) {
 		$data['externalType'] = $this->config["module"];
-		$rest = new OmRestService();
+		$rest = new OmRestService($this->config);
 		$response = $rest->call(
 				$this->getRestUrl("room")
 				, RestMethod::POST
@@ -184,7 +184,7 @@ class OmGateway {
 	}
 
 	function deleteRoom($roomId) {
-		$rest = new OmRestService();
+		$rest = new OmRestService($this->config);
 		$response = $rest->call(
 				$this->getRestUrl("room") . $roomId
 				, RestMethod::DELETE
@@ -209,7 +209,7 @@ class OmGateway {
 	 * Get list of available recordings made by this instance
 	 */
 	function getRecordings() {
-		$rest = new OmRestService();
+		$rest = new OmRestService($this->config);
 		$response = $rest->call(
 				$this->getRestUrl("record") . urlencode($this->config["module"])
 				, RestMethod::GET
@@ -227,7 +227,7 @@ class OmGateway {
 	}
 
 	function deleteRecording($recId) {
-		$rest = new OmRestService();
+		$rest = new OmRestService($this->config);
 		$response = $rest->call(
 				$this->getRestUrl("record") . $recId
 				, RestMethod::DELETE
@@ -249,7 +249,7 @@ class OmGateway {
 	}
 
 	function cleanWb($roomId) {
-		$rest = new OmRestService();
+		$rest = new OmRestService($this->config);
 		$response = $rest->call(
 				$this->getRestUrl("room") . 'cleanwb/' . $roomId
 				, RestMethod::GET
@@ -271,7 +271,7 @@ class OmGateway {
 	}
 
 	function getFiles() {
-		$rest = new OmRestService();
+		$rest = new OmRestService($this->config);
 		$response = $rest->call(
 				$this->getRestUrl("file") . urlencode($this->config["module"])
 				, RestMethod::GET
@@ -290,7 +290,7 @@ class OmGateway {
 
 	function createFile($fileJson, $fileContents) {
 		$fileJson['externalType'] = $this->config["module"];
-		$rest = new OmRestService();
+		$rest = new OmRestService($this->config);
 		$boundary = '';
 		$params = array(
 				array(
