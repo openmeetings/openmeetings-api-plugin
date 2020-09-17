@@ -117,6 +117,7 @@ class OmGateway {
 
 	function getSecureHash($user, $options) {
 		$rest = new OmRestService($this->config);
+		$options['externalType'] = $this->config["module"];
 		$response = $rest->call(
 				$this->getRestUrl("user") . "hash"
 				, RestMethod::POST
