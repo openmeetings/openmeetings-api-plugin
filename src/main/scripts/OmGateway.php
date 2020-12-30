@@ -111,7 +111,7 @@ class OmGateway {
             , "firstname" => $firstname
             , "lastname" => $lastname
             , "email" => $email
-            , "pictureUri" => $profilePictureUrl
+            , "profilePictureUrl" => $profilePictureUrl
             , "externalId" => $userId
             , "externalType" => $this->config["module"]
         );
