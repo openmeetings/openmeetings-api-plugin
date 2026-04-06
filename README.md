@@ -1,3 +1,3 @@
 # openmeetings-api-plugin
 
-PHP API to work with Openmeetings 5.x
+PHP API to work with Openmeetings 9.x
